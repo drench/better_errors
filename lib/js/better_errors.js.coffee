@@ -42,25 +42,31 @@ quotes = [
 ]
 
 getQuote = () ->
-  quotes[Math.floor(Math.random() * quotes.length)]
+  quotes.splice(Math.floor(Math.random() * quotes.length), 1)[0]
 
 initTags () ->
   clippy.load "Clippy", (agent) ->
-    jQuery("div.clippy").css(cursor: "pointer").click () ->
-      window.open "http://www.google.com/search?q=#{escape err}"
-      annoy = window.setInterval(
-        (
-          () ->
-            agent.speak getQuote()
-            agent.play "IdleSnooze"
-        ), 30000
-      )
-      false
     agent.show()
     agent.play "Greeting"
     agent.play "LookUpRight"
     err = "#{jQuery("header.exception h2").text()}: #{jQuery("header.exception p").text()}"
     agent.speak("Looks like your Rails app broke! #{err}!")
     agent.play "Searching"
-    agent.speak("Click me, and I'll try Googling a solution for you!")
+    agent.speak("Click me, and I'll see if StackOverflow has any clues.")
+    jQuery("div.clippy").css(cursor: "pointer").click () ->
+      jQuery(this).unbind("click").css(cursor: "")
+      window.open "https://duckduckgo.com/?q=!stackoverflow%20#{escape err}"
+      annoy = window.setInterval(
+        (
+          () ->
+            quote = getQuote()
+            if quote
+              agent.speak quote
+              agent.play "IdleSnooze"
+            else
+              window.clearInterval annoy
+              agent.hide()
+        ), 30000
+      )
+      false
     agent.play "IdleSnooze"
