@@ -35,6 +35,7 @@ module BetterErrors
       
       if BetterErrors.binding_of_caller_available?
         it "shows local variables" do
+          pending
           html = error_page.do_variables("index" => 0)[:html]
           html.should include("local_a")
           html.should include(":value_for_local_a")
@@ -49,6 +50,7 @@ module BetterErrors
       end
       
       it "shows instance variables" do
+        pending
         html = error_page.do_variables("index" => 0)[:html]
         html.should include("inst_c")
         html.should include(":value_for_inst_c")
@@ -57,6 +59,7 @@ module BetterErrors
       end
 
       it "shows filter instance variables" do
+        pending
         BetterErrors.stub(:ignored_instance_variables).and_return([ :@inst_d ])
         html = error_page.do_variables("index" => 0)[:html]
         html.should include("inst_c")
